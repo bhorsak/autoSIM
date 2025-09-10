@@ -8,18 +8,25 @@ Before you begin, ensure you have met the following requirements:
 
 - You will need to have OpenSim 4.0 installed and the Matlab scripting environment using the API set up, see https://simtk-confluence.stanford.edu:8443/display/OpenSim/Scripting+with+Matlab 
 - Code was tested with Matlab R2024a and WIN11 on Intel machines.
-- For newer processors such as Intel Core Ultra the function <CpuLoadBasedPausing> seems not to work properly. However, this function is deprecated and not used in default mode.
 
-## In Matlab you will need the following toolboxes :
+## In Matlab you will need the following toolboxes:
 - Image Processing Toolbox — Version 11.6+ (R2022b)  
 - Parallel Computing Toolbox — Version 7.7+ (R2022b)  
 - Phased Array System Toolbox — Version 4.8+ (R2022b)  
 - Signal Processing Toolbox — Version 9.1+ (R2022b)  
 - Statistics and Machine Learning Toolbox — Version 12.4+ (R2022b)  
 
+## Clone the Repository
+
+To get started, clone the repository with:
+
+```bash
+git clone https://github.com/bhorsak/autoSIM.git
+```
+
 ## Using autoSIM
 
-- To use this repo place it somewhere on your harddrive. To test the workflow you can use the example data provided in `.\_commonFiles\dataExamples`.
+- To test the workflow you can use the example data provided in `.\_commonFiles\dataExamples`.
 - Each model workflow has its own `start.m` file. In each file, there are some hardcoded settings which you will have to set the first time before running autoSIM, e.g. marker set definition. 
 - The entire repo expects a Vicon Nexus database folder. To run autoSIM your folder at least needs to contain *.c3d files for the condition to analyze and a static file. All *.c3d files need to include the condition information within each filename, such as `walking` (e.g., 001_walking_file.c3d). You will also need the `enf.files` which hold the information of valid/invalid force plate hits and which foot hit which force plate. If you don't have such a file you may want to create it yourself. The `start.m` files assumes that all necessary *.c3d files are located in one single folder (e.g. of one subject). It finds all relevant *.c3d files, creates the input data (e.g. start and stop time, body side, etc.), creates the necessary *.trc and *.mot files, and the external loads file and runs the workflow for each file. Note that, when a *.c3d file holds two valid force plate contacts (e.g. left and right). Simulations are performed separately for each contact.
 - In case you want to make use of the built-in personalization methods, such as the Torsion-Tool a `data.xml` for each session folder is needed. It contains in a standardized format information such as the tibio-femoral alignment angle in the frontal plane or tibial torsion. For detaisl please review the example file in `.\_commonFiles\dataExamples`.
@@ -27,7 +34,7 @@ Before you begin, ensure you have met the following requirements:
 
 ## Contributors
 
-Thanks to the following people who supported this repository:
+Thanks to the following people who gave me incredible supported for developing this repository:
 
 - [@BryceKillian](https://bitbucket.org/BKillen/)
 - [@IlseJonkers](https://www.kuleuven.be/wieiswie/en/person/00015567)
@@ -56,6 +63,20 @@ url = {https://www.sciencedirect.com/science/article/pii/S0966636225000591},
 author = {Brian Horsak and Philipp Krondorfer and Fabian Unglaube and Djordje Slijepčević and Andreas Kranzl}
 }
 
+Koller, W., Horsak, B., Kranzl, A., Unglaube, F., Baca, A., Kainz, H., 2025. Physiological plausible muscle paths: A MATLAB tool for detecting and resolving muscle path discontinuities in musculoskeletal OpenSim models, in: Gait & Posture, GAMMA Congress 2025 (26 – 29 March 2025, St Gallen Switzerland). pp. S21–S22. https://doi.org/10.1016/j.gaitpost.2025.01.063
+
+@inproceedings{koller_2025_physiological,
+  title = {Physiological Plausible Muscle Paths: {{A MATLAB}} Tool for Detecting and Resolving Muscle Path Discontinuities in Musculoskeletal {{OpenSim}} Models},
+  shorttitle = {Physiological Plausible Muscle Paths},
+  booktitle = {Gait \& {{Posture}}},
+  author = {Koller, Willi and Horsak, Brian and Kranzl, Andreas and Unglaube, Fabian and Baca, Arnold and Kainz, Hans},
+  year = {2025},
+  series = {{{GAMMA Congress}} 2025 (26 -- 29 {{March}} 2025, {{St Gallen Switzerland}})},
+  volume = {117},
+  pages = {S21-S22},
+  doi = {10.1016/j.gaitpost.2025.01.063}
+}
+
 ## Contact
 If you want to contact me you can reach me at <brian.horsak@fhstp.ac.at>.
 
@@ -67,4 +88,120 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## Third-Party Code and Licenses,
 see (`.\_commonFiles\sharedFunctions\ThirdPartyFiles`) and included OpenSim models. 
 
-This project also includes or depends on third-party components with their own licenses (e.g., BSD, MPL, CC-BY-NC). These components are clearly marked in the repository. Users of this project are responsible for ensuring compliance with the corresponding licenses when using or redistributing those parts. 
+This project also includes or depends on third-party components with their own licenses (e.g., BSD, MPL, CC-BY-NC). These components are clearly marked in the repository. Users of this project are responsible for ensuring compliance with the corresponding licenses when using or redistributing those parts.
+
+## Further References
+Depending on which Model or built-in Tool you will be using, please also consider to cite the following papers. Note the list might not be complete. PLease double-check the settings you make and make sure to cite Third-Party Tools, Coe, Models, ... appropriately.
+
+@article{laiWhyAreAntagonist2017,
+  title = {Why Are Antagonist Muscles Co-Activated in My Simulation? {{A}} Musculoskeletal Model for Analysing Human Locomotor Tasks},
+  shorttitle = {Why Are Antagonist Muscles Co-Activated in My Simulation?},
+  author = {Lai, Adrian K.M. and Arnold, Allison S. and Wakeling, James M.},
+  year = {2017},
+  journal = {Annals of biomedical engineering},
+  volume = {45},
+  number = {12},
+  pages = {2762--2774},
+  issn = {0090-6964},
+  doi = {10.1007/s10439-017-1920-7},
+  pmcid = {PMC5989715},
+  pmid = {28900782}
+}
+
+@article{lenhartPredictionValidationLoadDependent2015,
+  title = {Prediction and {{Validation}} of {{Load-Dependent Behavior}} of the {{Tibiofemoral}} and {{Patellofemoral Joints During Movement}}},
+  author = {Lenhart, Rachel L. and Kaiser, Jarred and Smith, Colin R. and Thelen, Darryl G.},
+  year = {2015},
+  journal = {Annals of Biomedical Engineering},
+  volume = {43},
+  number = {11},
+  pages = {2675--2685},
+  issn = {1573-9686},
+  doi = {10.1007/s10439-015-1326-3},
+  langid = {english}
+}
+
+@article{lernerHowTibiofemoralAlignment2015,
+  title = {How Tibiofemoral Alignment and Contact Locations Affect Predictions of Medial and Lateral Tibiofemoral Contact Forces},
+  author = {Lerner, Zachary F. and DeMers, Matthew S. and Delp, Scott L. and Browning, Raymond C.},
+  year = {2015},
+  journal = {Journal of Biomechanics},
+  volume = {48},
+  number = {4},
+  pages = {644--650},
+  issn = {00219290},
+  doi = {10.1016/j.jbiomech.2014.12.049},
+  langid = {english}
+}
+
+@article{rajagopalFullBodyMusculoskeletalModel2016,
+  title = {Full-{{Body Musculoskeletal Model}} for {{Muscle-Driven Simulation}} of {{Human Gait}}},
+  author = {Rajagopal, Apoorva and Dembia, Christopher L. and DeMers, Matthew S. and Delp, Denny D. and Hicks, Jennifer L. and Delp, Scott L.},
+  year = {2016},
+  journal = {IEEE transactions on bio-medical engineering},
+  volume = {63},
+  number = {10},
+  pages = {2068--2079},
+  issn = {1558-2531},
+  doi = {10.1109/TBME.2016.2586891},
+  langid = {english},
+  pmcid = {PMC5507211},
+  pmid = {27392337}
+}
+
+@article{smithCanAlteredNeuromuscular2019,
+  title = {Can Altered Neuromuscular Coordination Restore Soft Tissue Loading Patterns in Anterior Cruciate Ligament and Menisci Deficient Knees during Walking?},
+  author = {Smith, Colin R. and Brandon, Scott C. E. and Thelen, Darryl G.},
+  year = {2019},
+  journal = {Journal of Biomechanics},
+  volume = {82},
+  pages = {124--133},
+  issn = {0021-9290},
+  doi = {10/gmn54k},
+  langid = {english}
+}
+
+@article{smithInfluenceComponentAlignment2016,
+  title = {The {{Influence}} of {{Component Alignment}} and {{Ligament Properties}} on {{Tibiofemoral Contact Forces}} in {{Total Knee Replacement}}},
+  author = {Smith, Colin R. and Vignos, Michael F. and Lenhart, Rachel L. and Kaiser, Jarred and Thelen, Darryl G.},
+  year = {2016},
+  journal = {Journal of Biomechanical Engineering},
+  volume = {138},
+  number = {2},
+  pages = {021017},
+  issn = {0148-0731, 1528-8951},
+  doi = {10.1115/1.4032464},
+  langid = {english}
+}
+
+@article{uhlrichMuscleCoordinationRetraining2022a,
+  title = {Muscle Coordination Retraining Inspired by Musculoskeletal Simulations Reduces Knee Contact Force},
+  author = {Uhlrich, Scott D. and Jackson, Rachel W. and Seth, Ajay and Kolesar, Julie A. and Delp, Scott L.},
+  year = {2022},
+  journal = {Scientific Reports},
+  volume = {12},
+  number = {1},
+  pages = {9842},
+  publisher = {Nature Publishing Group},
+  issn = {2045-2322},
+  doi = {10.1038/s41598-022-13386-9},
+  langid = {english}
+}
+
+@article{veerkampTorsionToolAutomated2021,
+  title = {Torsion {{Tool}}: {{An}} Automated Tool for Personalising Femoral and Tibial Geometries in {{OpenSim}} Musculoskeletal Models},
+  shorttitle = {Torsion {{Tool}}},
+  author = {Veerkamp, Kirsten and Kainz, Hans and Killen, Bryce A. and J{\'o}nasd{\'o}ttir, Hulda and {van der Krogt}, Marjolein M.},
+  year = {2021},
+  journal = {Journal of Biomechanics},
+  volume = {125},
+  pages = {110589},
+  issn = {0021-9290},
+  doi = {10.1016/j.jbiomech.2021.110589},
+  langid = {english}
+}
+
+
+
+
+

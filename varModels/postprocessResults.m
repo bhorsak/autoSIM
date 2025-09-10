@@ -36,16 +36,10 @@ addpath(genpath(fullfile(strcat(repoPath,'\..\_commonFiles'))));
 %% ===== Set the data to process ==========================================
 
 % Which model do you want to use?
-Model2Use = 'RajagopalLaiUhlrich2023'; % 'lernergopal', 'rajagopal', RajagopalLaiUhlrich2023 ....
+Model2Use = 'lernergopal'; % 'lernergopal', 'rajagopal', RajagopalLaiUhlrich2023 ....
 
 % The root folder populating all of your working directories
-rootDirectory = 'E:\OSS\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\CP\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\Frontalohnerotation\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\Norm\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\8platevgl\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\Frontalundrotation\';
-%rootDirectory = 'Z:\dataDeepForce\deepForceData\19122024_1\normdaten8_20\normdaten8_20';
+rootDirectory = 'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\';
 
 % Select Option 1 out of 3:
 Option = 1;
@@ -58,8 +52,7 @@ switch Option
         % OpenSim automatically looks for that folder here. If not found in workingDirectory\Geometry, it will look at the standard OpenSim Paths.
         % Make sure that all paths have a '\' at the end!
         %---
-        workingDirectories =   {'E:\OSS\'};    % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
-        staticC3dFiles =       {'Static.c3d'};                          % {'Static01.c3d', 'Static.c3d', ...} or {'Static01.c3d'}
+        workingDirectories =   {'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'};    % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
 
     case 2
         %----- Option #2 ----------------------------------------------------------
@@ -93,7 +86,7 @@ conditions =  {'WalkA'}; % e.g.: {'Dynamic'} or {'mSEBT_AT','mSEBT_PM','mSEBT_PL
 trialType = 'walking'; % default = 'walking'; 'walking' or 'notWalking';
 
 % You can use the prefix (if you used it during processing) to split up the data report in different "groups"
-prefix = {'standard-report-2'};  % default = {'standard'} or {'standard-CE00', 'standard-CE0MW', 'standard-CE150'}
+prefix = {'standard'};  % default = {'standard'} or {'standard-CE00', 'standard-CE0MW', 'standard-CE150'}
 
 % Force to time normalize all data to 100% activity time OR use settings from JAM
 % processing. Note that the latter migth return partly time-normalized data (for

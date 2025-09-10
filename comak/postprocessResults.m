@@ -40,36 +40,42 @@ addpath(genpath(fullfile(strcat(repoPath,'\..\_commonFiles'))));
 %% ===== Set the data to process ==========================================
 
 % The root folder populating all of your working directories
-rootDirectory = 'D:\subset\'; 
+rootDirectory = 'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS'; 
 
-%----- Option #1 ----------------------------------------------------------
-% Set manual list of workingDirectories and staticC3dFiles:
-% You can only specify one single folder. These folders contain all *.c3d files to analyze for a single subject
-% OpenSim automatically looks for that folder here. If not found in workingDirectory\Geometry, it will look at the standard OpenSim Paths.
-% Make sure that all paths have a '\' at the end!
-%---
-workingDirectories = {'D:\subset\a1y5l5q4g2\'}; % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
-staticC3dFiles = {'StandA.c3d'}; % {'Static01.c3d', 'Static.c3d', ...} or {'Static01.c3d'}
+% Select Option 1 out of 3:
+Option = 1;
 
+switch Option
+    case 1
+        %----- Option #1 ----------------------------------------------------------
+        % Set manual list of workingDirectories and staticC3dFiles:
+        % You can only specify one single folder. These folders contain all *.c3d files to analyze for a single subject
+        % OpenSim automatically looks for that folder here. If not found in workingDirectory\Geometry, it will look at the standard OpenSim Paths.
+        % Make sure that all paths have a '\' at the end!
+        %---
+        workingDirectories =   {'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'};    % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
 
-%----- Option #2 ----------------------------------------------------------
-% Create workingDirectories and staticC3dFiles automatically and store a local file in the rootDirectory for later usage.
-% If the following line is uncommented it will create the lists of <workingDirectories> and <staticC3dFiles>
-% automatically based on the specified string pattern, e.g., 'Static' or 'Stand', etc. 
-% You can choose between two methods: 'byC3dFilePatternName' == looking for the appropriate file by the c3d file name pattern provided by the last
-% inputvar (e.g., 'static') OR by 'byEnfDescription' which will look for the file based on the description in the *.enf file. The latter is the standard for the OSS.
-% Note that the third input is a string pattern for which the script would look at the end of potential static trials, i.e. "A" for "StandA" trials.
-%---
-%[workingDirectories, ~] = getTopLvlFoldersStatics(rootDirectory, 'byEnfDescription', 'Stand', ''); % default (OSS only!) = 'byEnfDescription', 'Stand', '';  default (general) = 'byC3dFilePatternName', 'Static', '';
+    case 2
+        %----- Option #2 ----------------------------------------------------------
+        % Create workingDirectories and staticC3dFiles automatically and store a local file in the rootDirectory for later usage.
+        % If the following line is uncommented it will create the lists of <workingDirectories> and <staticC3dFiles>
+        % automatically based on the specified string pattern, e.g., 'Static' or 'Stand', etc.
+        % You can choose between two methods: 'byC3dFilePatternName' == looking for the appropriate file by the c3d file name pattern provided by the last
+        % inputvar (e.g., 'static') OR by 'byEnfDescription' which will look for the file based on the description in the *.enf file. The latter is the standard for the OSS.
+        % Note that the third input is a string pattern for which the script would look at the end of potential static trials, i.e. "A" for "StandA" trials.
+        %---
+        [workingDirectories, ~] = getTopLvlFoldersStatics(rootDirectory, 'byEnfDescription', 'Stand', ''); % default (OSS only!) = 'byEnfDescription', 'Stand', '';  default (general) = 'byC3dFilePatternName', 'Static', '';
 
-%----- Option #3 ----------------------------------------------------------
-% Read [workingDirectories, staticC3dFiles] from local file which was
-% created either manually or by Option #2 in an earlier stage. You can
-% specify here from which index it should start. This is the best option for large-scale simulation tasks. 
-%---
-startIdx = 1; % default = 1
-stopIdx = NaN; % default = NaN (== to last wd); you can also specify a stop index here.
-%[workingDirectories, ~] = readWDsFromFile(rootDirectory, startIdx, stopIdx); 
+    case 3
+        %----- Option #3 ----------------------------------------------------------
+        % Read [workingDirectories, staticC3dFiles] from local file which was
+        % created either manually or by Option #2 in an earlier stage. You can
+        % specify here from which index it should start. This is the best option for large-scale simulation tasks.
+        %---
+        startIdx = 1; % default = 1
+        stopIdx = NaN; % default = NaN (== to last wd); you can also specify a stop index here.
+        [workingDirectories, ~] = readWDsFromFile(rootDirectory, startIdx, stopIdx);
+end 
 
 %% ===== More settings ====================================================
 

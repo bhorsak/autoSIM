@@ -2,12 +2,11 @@ clear all; close all; clc;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Starting the COMAK workflow %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This file is used to start the osimjam workflow. The code
+% This file is used to start the COMAK workflow. The code
 % and functions included below create all necessary input variables to run
-% the <osimjam_workflow.m> pipeline. It assumes that all relevant *.c3d files
+% the workflow. It assumes that all relevant *.c3d files
 % are stored in one single directory (workingDirectory) and creates all
-% necessary *.trc and *.mot files as well as relevant input data for
-% the <osimjam_workflow.m>.
+% necessary *.trc and *.mot files as well as relevant input data for OpenSim.
 %
 % The workflow accepts walking and star excursion balance test trials
 % (mSEBT). Note that this workflow needs *.enf files (Vicon Nexus
@@ -17,13 +16,7 @@ clear all; close all; clc;
 %
 % Ref. for OpenSim-JAM and COMAK: https://github.com/clnsmith/opensim-jam
 %
-% Note: Before running change some hard coded settings/paths below!
-% Also check some more settings directly in the <osimjam_workflow.m> file.
-%
 % Written by:           Brian Horsak - brian.horsak@fhstp.ac.at
-% Acknowledgements:     Many thx to Bryce Killian (KU Leuven) for his great
-%                       support and for Bernhard Guggenberger for his
-%                       contributions
 %
 % Last changed:         09/2025
 % Version:              See version file in osimProcessing root folder.
@@ -75,7 +68,7 @@ repoPaths.commonFiles = fullfile(strcat(repoPath,'\..\_commonFiles'));
 % COMAK processing! NOTE: this only has to be done once, you then should
 % use the updated pathnames for your workingDirectories in the next
 % section!
-rootDirectory = 'E:\OSS\'; % The root folder populating all of your working directories
+rootDirectory = 'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'; % The root folder populating all of your working directories
 renameFolders(rootDirectory, {',', ' ','(',')'}); % <--- uncomment if needed!
 
 %% ===== Set the data to process ==========================================
@@ -91,7 +84,7 @@ switch Option
         % OpenSim automatically looks for that folder here. If not found in workingDirectory\Geometry, it will look at the standard OpenSim Paths.
         % Make sure that all paths have a '\' at the end!
         %---
-        workingDirectories = {'E:\OSS\'}; % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
+        workingDirectories = {'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'}; % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
         staticC3dFiles = {'Static.c3d'}; % {'Static01.c3d', 'Static.c3d', ...} or {'Static01.c3d'}
 
     case 2
@@ -187,7 +180,7 @@ timeNorm = 'true'; % default = 'true'; 'true' or 'false'
 % Note that this will overwrite values set in tf_angle_r/l!
 % If you want to evaluate different varus/valgus model configurations of the same individual, indicate them in the prefix, e.g. var2, var4, ...
 useStatic4FrontAlignmentAsFallback = true;          % default = false; true or false
-tf_angle_fromSource = 'fromStatic';                 % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
+tf_angle_fromSource = 'false';                 % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
 tf_angle_r = 0;                                     % default = 0
 tf_angle_l = 0;                                     % default = 0
 
@@ -199,11 +192,11 @@ tf_angle_l = 0;                                     % default = 0
 % You can also directly specifiy to use the direct kinematics data from the dynamic c3d files as TT value for the TorsionTool.
 % NOTE: before using the TorsionTool check the hardcoded default values in the main torsion script, since based on these the torsion will be adjusted accordingly!
 % NOTE to 'fromStatic' - we currently use the CleveLand Model (from OSS - Speising). Here external TT is NEGATIVE. Currently this values is multiplied by -1 to have the correct sign for the TorsionTool (where ext. TT is POSITIVE).
-useDirectKinematics4TibRotEstimationAsFallback = true;      % default = false; true or false;
-tibTorsionAdaptionMethod = 'fromExtDataFile';               % default = 'fromStatic'; 'fromExtDataFile' or 'fromStatic'
-tibTorsionAdaption = true;                                  % default = false; true or false
-neckShaftAdaption = false;                                  % default = false; true or false
-femurAntetorsionAdaption = false;                           % default = false; true or false
+useDirectKinematics4TibRotEstimationAsFallback = false;      % default = false; true or false;
+tibTorsionAdaptionMethod = 'fromExtDataFile';                % default = 'fromStatic'; 'fromExtDataFile' or 'fromStatic'
+tibTorsionAdaption = false;                                  % default = false; true or false
+neckShaftAdaption = false;                                   % default = false; true or false
+femurAntetorsionAdaption = false;                            % default = false; true or false
 
 %%----- Check & Adapt Wrapping Objects ------------------------------------
 % Decide whether you want to automatically check and adapt discontinuities in
@@ -240,7 +233,7 @@ forceTrcMotCreation = true; % default = true
 % Add file-prefix to distinguish different setups, for example to indicate a specfic trial 'variation', e.g. 'with_muscle_optimization'
 % Note: for convenience during group analysis it is recommended to always use a prefix!
 % Note always separate prefix conditions with '-' (standard-CE150). Do not use an '_'! Otherwise it will not work.
-prefix = 'standard2'; % default = 'standard', or e.g. 'noTimeNorm', 'VarAligned2deg'
+prefix = 'standard'; % default = 'standard', or e.g. 'noTimeNorm', 'VarAligned2deg'
 
 %%----- Data Augmentation -------------------------------------------------
 % Data Augmentation-Mode. If you set this to true, each trial will be run
@@ -313,11 +306,16 @@ labFlag = 'OSSnoArms'; % 'OSS', 'OSSnoArms', 'FHSTP-BIZ', 'FHSTP', 'FHSTPnoArms'
 
 %%----- Set max. N of cmd windows -----------------------------------------
 % Define number of allowed simultaneously running cmd windows.
-maxCmd = 8; % default = 8 (for a Surface Book2 @i7-8650U @ 1.90Ghz), 31 for 32-core Server
+maxCmd = 30; % default = 8 (for a Surface Book2 @i7-8650U @ 1.90Ghz), 31 for 32-core Server
 
 %%----- CPU Load Threshold ------------------------------------------------
-% Define a threshold the CPU load has to fall below (median over 1 minutes), before the next batch of files is forwarded to the cmd window.
-thresholdCpuLoad = 40; % default ~ 40% for Laptop, ~70% for 32-core Server or 50% for 64-core Server with 128GB RAM
+% Define a threshold the CPU-load has to fall below (median over 1 minutes), before the next batch of files are forwarded to the cmd window.
+% In case this is set to False the workflow will use the amount of open cmd windows to control CPU load. Here the above threshold <maxCmd> will be used as cut-off.
+thresholdCpuLoad = 70;      % default ~ 40% for Laptop, ~70% for 64-core Server
+useCPUThreshold = false;    % default = false; true or false
+
+% NOTE: it seems that the function <CpuLoadBasedPausing> & <CpuLoadBasedPausing_WIN11> does not always work properly for WIN11 and
+% newer Intelchips (intel core Ultra 7). Therefore the the appraoch using the amount of open cmd windows is recommended.
 
 %%----- Catch errors Y/N? -------------------------------------------------
 % Disable this for debugging when developing the code. Enable for running
@@ -467,13 +465,7 @@ loops4Comak(rootDirectory, workingDirectories, staticC3dFiles, conditions, labFl
     scaleMuscleStrength, manualMusScaleF, markerSet, bodyheightGenericModel, addPelvisHelperMarker, pelvisMarker4nonUniformScaling, tf_angle_fromSource, torsiontool, useDirectKinematics4TibRotEstimationAsFallback, ...
     tib_torsion_LeftMarkers, tib_torsion_RightMarkers, forceTrcMotCreation, dataAugmentation, ForceModelCreation, performPostProcessing, trialType, timeNormFlag, renameC3DFiles2enfDescription, ...
     vtp2keep, deleteVtps, jamSettings, checkAndAdaptMomArms, useASTool, repoPaths, allowAutoRestart, thresholdFreeRAM, useC3Devents, scalePelvisManually, pelvisWidthGenericModel, ...
-    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod)
+    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, useCPUThreshold)
 
 %% Final  message
 disp('*******************************************  COMAK over and out  *******************************************');
-
-%% COMAK Log
-% Development Roadmap:
-% # TorsionTool, this needs to be done --> "not measured yet!!!!" You have to measure this on the OpenSim Geometry with the same method as with your participants!
-% # add tibial torsion tool based on static trial. Use diff. between model tibial torsion and tib torsion from static trial
-% # check the iso muscle force sclaing from Rajagopal paper: Handsfield et al. [26]

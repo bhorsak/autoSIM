@@ -292,7 +292,7 @@ if useDirectKinematics4TibRotEstimationAsFallback && ~strcmp(tibTorsionAdaptionM
 
         % Set new personalization infos.
         persInfo4TTfromStaticOnly.TTR_degree = getTTangleFromDirKinemStatic(staticC3d, InputData, 'r');
-        persInfo4TTfromStaticOnly.TTL_degree = getTTangleFromDirKinemStatic(staticC3d, InputData 'l');
+        persInfo4TTfromStaticOnly.TTL_degree = getTTangleFromDirKinemStatic(staticC3d, InputData, 'l');
 
         torsiontool4TTfromStaticOnly = torsiontool;
         torsiontool4TTfromStaticOnly.femurAntetorsionAdaption = false; % just to make sure the values are not rotated again in case they were.

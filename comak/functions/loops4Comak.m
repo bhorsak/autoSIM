@@ -5,11 +5,10 @@ function loops4Comak(rootDirectory, workingDirectories, staticC3dFiles, conditio
     tf_angle_fromSource, torsiontool, useDirectKinematics4TibRotEstimationAsFallback, tib_torsion_LeftMarkers, tib_torsion_RightMarkers, forceTrcMotCreation, ...
     dataAugmentation, ForceModelCreation, performPostProcessing, trialType, timeNormFlag, renameC3DFiles2enfDescription, vtp2keep, deleteVtps, jamSettings, ...
     checkAndAdaptMomArms, useASTool, repoPaths, allowAutoRestart, thresholdFreeRAM, useC3Devents, scalePelvisManually, pelvisWidthGenericModel, ...
-    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod)
+    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, useCPUThreshold)
 
 
-% In case user selected the option that matlab can restart automatically in
-% case of low memory.
+%% In case user selected the option that matlab can restart automatically in case of low memory.
 
 % The follwoing <currentPath> needs to be created automatically since for a restart we do not have
 % any inputs to the function before loading the temp workspace.
@@ -36,14 +35,14 @@ else
     kickOffRestart = false; % Set to false initially
 end
 
-% Load data augmentation set if user selected to augment simulations
+%% Load data augmentation set if user selected to augment simulations
 augN = 1; % set this to one to only run the loop once unless dataAugmentation is set to true
 if dataAugmentation
     load(fullfile(path2setupFiles, 'dataAugmentationSet.mat'));
     augN = height(dataAugmentationSet); %number of augmentation cycles
 end
 
-% Now loop through folders
+%% Now loop through folders
 errN = 0; % Number of errors occured and catched
 failures = struct('cond', {}, 'wd', {}, 'err', {}); % collect catched errors
 tStart = tic; % Start timer
@@ -356,14 +355,14 @@ for i_wd = i_wd : length(workingDirectories)
                             % To potentially prevent buffer overflow, make sure to close all fids in case fids are still open
                             fclose('all');
 
-                            % Now check every X minutes if CPU load is below the threshold (e.g. 35%), before next batch of files.
-                            if batchCount == maxCmd
-                                disp(strcat('-> Matlab paused! When CPU-load drops below the threshold of', {' '}, string(thresholdCpuLoad) ,{'% '},'the next batch of files will kick off ...'));
-                                CpuLoadBasedPausing_WIN11(thresholdCpuLoad, 60*1.5);
-
-                                % Set batch cnt back to zero.
-                                batchCount = 0; % Used to limit the number of open cmd windows
-                            end
+                            % Wait until ...
+            				if useCPUThreshold
+            					disp(strcat('-> Matlab paused! When CPU-load drops below the threshold of', {' '}, string(thresholdCpuLoad) ,{'% '},'the next batch of files will kick off ...'));
+            					CpuLoadBasedPausing_WIN11(thresholdCpuLoad, 60);
+                            else
+            					disp(strcat('-> Matlab paused! When the number of cmd windows drops below the threshold of N=', string(maxCmd) ,{' '},'of open cmd windows, the next batch of files will kick off ...'));
+            					monitorCmdWindowsAndWait(5, 8, maxCmd);
+            				end
 
                             % Check how much RAM is left and take action if too low                            
                             freeRAMinPerc = measureFreeRAM;

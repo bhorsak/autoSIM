@@ -56,13 +56,16 @@ repoPaths.repo = repoPath;
 repoPaths.commonFiles = fullfile(strcat(repoPath,'\..\_commonFiles'));
 
 % ------------ START SUPER LOOP -------------------------------------------
-rootDirs = {'E:\OSS\'};
-% 'Z:\dataDeepForce\deepForceData\19122024_1\normdaten8_20\normdaten8_20';
-% 'Z:\dataDeepForce\deepForceData\19122024_1\8platevgl\', ...
-% 'Z:\dataDeepForce\deepForceData\19122024_1\CP\', ...
-% 'Z:\dataDeepForce\deepForceData\19122024_1\Frontalohnerotation\', ...
-% 'Z:\dataDeepForce\deepForceData\19122024_1\Frontalundrotation\', ...
-% 'Z:\dataDeepForce\deepForceData\19122024_1\Norm\'};
+rootDirs = {'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'};
+
+% OR in case you have several databases:
+% rootDirs = {'E:\OSS1\', ...
+% 'E:\OSS2\', ...
+% 'E:\OSS3\', ...
+% 'E:\OSS4\', ...
+% 'E:\OSS5\', ...
+% 'E:\OSS6\', ...
+% 'E:\OSS7\'};
 
 
 for j = 1 : length(rootDirs)
@@ -95,7 +98,7 @@ for j = 1 : length(rootDirs)
             % OpenSim automatically looks for that folder here. If not found in workingDirectory\Geometry, it will look at the standard OpenSim Paths.
             % Make sure that all paths have a '\' at the end!
             %---
-            workingDirectories = {'E:\OSS\'}; % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
+            workingDirectories = {'E:\LocDat\GitHub\autoSIM\_commonFiles\dataExamples\OSS\'}; % {'D:\...\', 'C:\...\', ...} or {'D:\....\'}
             staticC3dFiles = {'Static.c3d'}; % {'Static01.c3d', 'Static.c3d', ...} or {'Static01.c3d'}
 
         case 2
@@ -178,7 +181,7 @@ for j = 1 : length(rootDirs)
     %%----- Scale Pelvis Manually ---------------------------------------------
     % If yes, the pelvis width will be fetched from the *.mp file and the
     % variable "InterAsisDistance" and used to scale the pelivs manually.
-    scalePelvisManually = false; % default = true; or false.
+    scalePelvisManually = true; % default = true; or false.
 
     %%----- Lock Suptalar Joint -----------------------------------------------
     % Lock Subtalar for scaling? This might be usefull if you only have one
@@ -221,7 +224,7 @@ for j = 1 : length(rootDirs)
     % discontinuities in moment arms at the hip and knee and wrapping objects will be iteratively
     % reduced until discontinuities are resolved. This script is based on Willi
     % Kollers (unpublished) work.
-    checkAndAdaptMomArms = false; % default = true; true or false
+    checkAndAdaptMomArms = true; % default = true; true or false
 
     %%----- Contact Geometry --------------------------------------------------
     % Define which bodypart has first contact to ground (e.g. for generating the external loads file)
@@ -245,7 +248,7 @@ for j = 1 : length(rootDirs)
     % Add file-prefix to distinguish different setups, for example to indicate a specfic trial 'variation', e.g. 'with_muscle_optimization'
     % Note: for convenience during group analysis it is recommended to always use a prefix!
     % Note always separate prefix conditions with '-' (standard-CE150). Do not use an '_'! Otherwise it will not work.
-    prefix = 'standard-valTestpelistnotmanual'; % default = 'standard', or e.g. 'noTimeNorm', 'VarAligned2deg'
+    prefix = 'standard'; % default = 'standard', or e.g. 'noTimeNorm', 'VarAligned2deg'
 
     %%----- Data Augmentation -------------------------------------------------
     % Data Augmentation-Mode. If you set this to true, each trial will be run
@@ -302,7 +305,7 @@ for j = 1 : length(rootDirs)
     % Disable this for debugging when developing the code. Enable for running
     % big file batches so that errors are caught and Matlab won`t stop on an
     % error.
-    catchErrors = false; % default = true
+    catchErrors = true; % default = true
 
     %%----- Settings for use of Parrallell Computing --------------------------
     maxNumWorkers = 7; % this depends on your machine and task ... 7 seemed fine for my 64-core sever (for a standard scale + TF only and with momentarm checks).
@@ -524,8 +527,8 @@ for j = 1 : length(rootDirs)
         endIdx = min(batchIdx * batchSize, Nmax);  % Ensure not to exceed Nmax
 
         % Run the parallel loop for the current batch
-        for i_parfor = startIdx:endIdx; warning("parfor not activated!"); %#> for development only
-            %parfor (i_parfor = startIdx:endIdx, maxNumWorkers)
+        %for i_parfor = startIdx:endIdx; warning("parfor not activated!"); %#> for development only
+        parfor (i_parfor = startIdx:endIdx, maxNumWorkers)
             loops4Models_parfor(rootDirectory, workingDirectories, staticC3dFiles, conditions, labFlag, path2GenericModels, path2opensim, path2setupFiles, tf_angle_r, tf_angle_l, ...
                 firstContact_L, firstContact_R, prefixCell, timeNorm, maxCmd, thresholdCpuLoad, lockSubtalar4Scaling, ...
                 scaleMuscleStrength, manualMusScaleF, markerSet, bodyheightGenericModel, addPelvisHelperMarker, pelvisMarker4nonUniformScaling, tf_angle_fromSource, torsiontool, useDirectKinematics4TibRotEstimationAsFallback, ...
