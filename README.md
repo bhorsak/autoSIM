@@ -50,6 +50,7 @@ Please cite the following reference(s) if you use autoSIM:
 
 Horsak, B., Krondorfer, P., Unglaube, F., Slijepčević, D., Kranzl, A., 2025. Feasibility of fully automated and semi-personalized musculoskeletal simulations to process large-scale gait datasets, in: Gait & Posture, GAMMA Congress 2025 (26 – 29 March 2025, St Gallen Switzerland). pp. S18–S19. https://doi.org/10.1016/j.gaitpost.2025.01.059
 
+```
 @article{HORSAK2025S18,
 title = {Feasibility of fully automated and semi-personalized musculoskeletal simulations to process large-scale gait datasets},
 journal = {Gait & Posture},
@@ -62,9 +63,11 @@ doi = {https://doi.org/10.1016/j.gaitpost.2025.01.059},
 url = {https://www.sciencedirect.com/science/article/pii/S0966636225000591},
 author = {Brian Horsak and Philipp Krondorfer and Fabian Unglaube and Djordje Slijepčević and Andreas Kranzl}
 }
+```
 
 Koller, W., Horsak, B., Kranzl, A., Unglaube, F., Baca, A., Kainz, H., 2025. Physiological plausible muscle paths: A MATLAB tool for detecting and resolving muscle path discontinuities in musculoskeletal OpenSim models, in: Gait & Posture, GAMMA Congress 2025 (26 – 29 March 2025, St Gallen Switzerland). pp. S21–S22. https://doi.org/10.1016/j.gaitpost.2025.01.063
 
+```
 @inproceedings{koller_2025_physiological,
   title = {Physiological Plausible Muscle Paths: {{A MATLAB}} Tool for Detecting and Resolving Muscle Path Discontinuities in Musculoskeletal {{OpenSim}} Models},
   shorttitle = {Physiological Plausible Muscle Paths},
@@ -76,6 +79,7 @@ Koller, W., Horsak, B., Kranzl, A., Unglaube, F., Baca, A., Kainz, H., 2025. Phy
   pages = {S21-S22},
   doi = {10.1016/j.gaitpost.2025.01.063}
 }
+```
 
 ## Contact
 If you want to contact me you can reach me at <brian.horsak@fhstp.ac.at>.
@@ -93,6 +97,7 @@ This project also includes or depends on third-party components with their own l
 ## Further References
 Depending on which Model or built-in Tool you will be using, please also consider to cite the following papers. Note the list might not be complete. PLease double-check the settings you make and make sure to cite Third-Party Tools, Coe, Models, ... appropriately.
 
+```
 @article{laiWhyAreAntagonist2017,
   title = {Why Are Antagonist Muscles Co-Activated in My Simulation? {{A}} Musculoskeletal Model for Analysing Human Locomotor Tasks},
   shorttitle = {Why Are Antagonist Muscles Co-Activated in My Simulation?},
@@ -200,6 +205,7 @@ Depending on which Model or built-in Tool you will be using, please also conside
   doi = {10.1016/j.jbiomech.2021.110589},
   langid = {english}
 }
+```
 
 
 
