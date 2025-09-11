@@ -1,4 +1,4 @@
-function [tt_angle_used] = getTTangleFromDirKinemStatic(static, InputData, side)
+function [tt_angle_used] = getTTangleFromDirKinemStatic(static, InputData, side, varNameKneeAngle_c3d)
 %
 %   This function estimates the tibial torsion angle based on knee rotation
 %   during gait, extracted from the direct kinematic outputs of the 
@@ -34,7 +34,7 @@ function [tt_angle_used] = getTTangleFromDirKinemStatic(static, InputData, side)
 
 setMethod = 'fromDynamic'; % default = 'fromDynamic'; OR 'fromStatic'
 
-% Based on the publication from Radler et al. (2010) we will use 'fromDynamic' as default, see Radler, et al., 2010. Torsional profile versus gait analysis: consistency between the anatomic torsion and the resulting gait pattern in patients with rotational malalignment of the lower extremity. Gait Posture 32, 405–410. https://doi.org/10.1016/j.gaitpost.2010.06.019
+% Using the dynamic trials is based on the publication from Radler et al. (2010) we will use 'fromDynamic' as default, see Radler, et al., 2010. Torsional profile versus gait analysis: consistency between the anatomic torsion and the resulting gait pattern in patients with rotational malalignment of the lower extremity. Gait Posture 32, 405–410. https://doi.org/10.1016/j.gaitpost.2010.06.019
 
 
 switch setMethod
@@ -61,11 +61,11 @@ switch setMethod
 
         % Determine correct variables and event names
         if lower(side) == 'l'
-            kneeVariable = "LKneeAngles";
+            kneeVariable = varNameKneeAngle_c3d.L;
             strikeField = "Left_Foot_Strike";
             footOffField = "Left_Foot_Off";
         elseif lower(side) == 'r'
-            kneeVariable = "RKneeAngles";
+            kneeVariable = varNameKneeAngle_c3d.R;
             strikeField = "Right_Foot_Strike";
             footOffField = "Right_Foot_Off";
         else
@@ -106,7 +106,7 @@ switch setMethod
                         start = round(strikes(j) / (1/framerate));
                         stop  = round(footOffs(j) / (1/framerate));
 
-                        tmp = angles.(kneeVariable)(:, 3);
+                        tmp = angles.(kneeVariable)(:, varNameKneeAngle_c3d.posTrans);
                         start = max(1, min(start, length(tmp)));
                         stop = max(1, min(stop, length(tmp)));
 
@@ -134,10 +134,20 @@ switch setMethod
     case 'fromStatic'
 
         %% Get TT angle directly from static direct kinematic model output from the c3d file.
+
+        if lower(side) == 'l'
+            kneeVariable = varNameKneeAngle_c3d.L;
+
+        elseif lower(side) == 'r'
+            kneeVariable = varNameKneeAngle_c3d.R;
+
+        else
+            error("The variable 'side' is not defined correctly in <getTTangleFromDirKinemStatic>")
+        end
+
         acq = btkReadAcquisition(static);
         angles = btkGetAngles(acq);
-        kneeVariable = strcat(upper(side),'KneeAngles');
-        kneeRot = median(angles.(kneeVariable)(:,3));
+        kneeRot = median(angles.(kneeVariable)(:,varNameKneeAngle_c3d.posTrans));
 
         tt_angle_used = round(kneeRot,0) * -1; % to have it similar to TorsionTool where ext is positive but in Clevenland ext. is negative.
 

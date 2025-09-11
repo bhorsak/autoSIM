@@ -177,10 +177,15 @@ timeNorm = 'true'; % default = 'true'; 'true' or 'false'
 % You can set manual adjustments with tf_angle_r/l. If tf_angle_fromSource is set to 'fromStatic' the tf angle from the static trial will be used based on the
 % data of the direct kinematic model outputs in the c3d file. If set to 'fromExtDataFile' the skript will try to fetch the data from an external
 % source file (data.xml). If this file is empty (and you set 'useStatic4FrontAlignmentAsFallback' to true) it will fall back to 'fromStatic'.
-% Note that this will overwrite values set in tf_angle_r/l!
-% If you want to evaluate different varus/valgus model configurations of the same individual, indicate them in the prefix, e.g. var2, var4, ...
+% Note that this will overwrite values set in tf_angle_r/l! If you want to evaluate different varus/valgus model configurations of the same individual, indicate them in the prefix, e.g. var2, var4, ...
+
+% NOTE: in some cases we will use the knee angles from the static trial to estimate the TF angle. For this purpose we need to read the Left/Right Knee anlges fromt the static *.c3d file. The variable name needs to be specified here. 
+varNameKneeAngle_c3d.R = 'RKneeAngles';             % default = 'RKneeAngles'; this depends on how the variable is defined in your *.c3d files.
+varNameKneeAngle_c3d.L = 'LKneeAngles';             % default = 'LKneeAngles'; this depends on how the variable is defined in your *.c3d files.
+varNameKneeAngle_c3d.posFront = 2;                  % default = 2; You can specify the position (column) of the frontal plane data in your *.c3d files.
+varNameKneeAngle_c3d.posTrans = 3;                  % default = 3; You can specify the position (column) of the transverse plane data in your *.c3d files (later needed for TT).
 useStatic4FrontAlignmentAsFallback = true;          % default = false; true or false
-tf_angle_fromSource = 'false';                 % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
+tf_angle_fromSource = 'fromStatic';                      % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
 tf_angle_r = 0;                                     % default = 0
 tf_angle_l = 0;                                     % default = 0
 
@@ -193,8 +198,8 @@ tf_angle_l = 0;                                     % default = 0
 % NOTE: before using the TorsionTool check the hardcoded default values in the main torsion script, since based on these the torsion will be adjusted accordingly!
 % NOTE to 'fromStatic' - we currently use the CleveLand Model (from OSS - Speising). Here external TT is NEGATIVE. Currently this values is multiplied by -1 to have the correct sign for the TorsionTool (where ext. TT is POSITIVE).
 useDirectKinematics4TibRotEstimationAsFallback = false;      % default = false; true or false;
-tibTorsionAdaptionMethod = 'fromExtDataFile';                % default = 'fromStatic'; 'fromExtDataFile' or 'fromStatic'
-tibTorsionAdaption = false;                                  % default = false; true or false
+tibTorsionAdaptionMethod = 'fromStatic';                % default = 'fromStatic'; 'fromExtDataFile' or 'fromStatic'
+tibTorsionAdaption = true;                                  % default = false; true or false
 neckShaftAdaption = false;                                   % default = false; true or false
 femurAntetorsionAdaption = false;                            % default = false; true or false
 
@@ -436,6 +441,18 @@ end
 
 %% Prepare to run the workflow and postprocessing
 
+% Check if the prefix contains an underscore
+if contains(prefix, '_')
+    disp('WARNING: Underscore detected in prefix. Stopping script. Please remove any "_" from your prefix!');
+    return;
+end
+
+% Check if paths contain empty space - the OpenSim API does not like that.
+if contains(repoPath, ' ') || contains(rootDirectory, ' ')
+    disp('WARNING: Empty spaces detected in repopath or root directory! Stopping script. AutoSIM does not support empty or special characters in paths!');
+    return;
+end
+
 % Create struct for JAM settings
 jamSettings.ligaments = ligaments;
 jamSettings.attachedGeometryBodies = attachedGeometryBodies;
@@ -465,7 +482,7 @@ loops4Comak(rootDirectory, workingDirectories, staticC3dFiles, conditions, labFl
     scaleMuscleStrength, manualMusScaleF, markerSet, bodyheightGenericModel, addPelvisHelperMarker, pelvisMarker4nonUniformScaling, tf_angle_fromSource, torsiontool, useDirectKinematics4TibRotEstimationAsFallback, ...
     tib_torsion_LeftMarkers, tib_torsion_RightMarkers, forceTrcMotCreation, dataAugmentation, ForceModelCreation, performPostProcessing, trialType, timeNormFlag, renameC3DFiles2enfDescription, ...
     vtp2keep, deleteVtps, jamSettings, checkAndAdaptMomArms, useASTool, repoPaths, allowAutoRestart, thresholdFreeRAM, useC3Devents, scalePelvisManually, pelvisWidthGenericModel, ...
-    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, useCPUThreshold)
+    useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, useCPUThreshold, varNameKneeAngle_c3d)
 
 %% Final  message
 disp('*******************************************  COMAK over and out  *******************************************');

@@ -4,7 +4,7 @@ function [path2scaledModel, tf_angle_out, torsionTool_out, tf_angle_fromSource_o
     prefix, bodyheightGenericModel, BodyHeight, ...
     tf_angle_manual, tf_angle_fromSource, path2static, torsiontool, ...
     tib_torsion_Markers, ForceModelCreation, checkAndAdaptMomArms, sampleInputFile, useASTool, useDirectKinematics4TibRotEstimationAsFallback, ...
-    InputData, scalePelvisManually, pelvisWidthGenericModel, useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, staticC3d)
+    InputData, scalePelvisManually, pelvisWidthGenericModel, useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, varNameKneeAngle_c3d)
 
 % This file scales the *.osim model using the API and opensim from the
 % comak bin folder. Additionally it also scales the contact geometry by
@@ -244,8 +244,8 @@ else
 
         % Initialize new personalization infos.
         persInfo4TTfromStaticOnly = persInfo;
-        persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'r'));
-        persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'l'));
+        persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(path2static, InputData, 'r', varNameKneeAngle_c3d));
+        persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(path2static, InputData, 'r', varNameKneeAngle_c3d));
 
         torsiontool4TTfromStaticOnly = torsiontool;
         torsiontool4TTfromStaticOnly.femurAntetorsionAdaption = false; % just to make sure the values are not rotated again in case they were.
@@ -294,8 +294,8 @@ else
             persInfo4TTfromStaticOnly = persInfo;
 
             % Set new personalization infos.
-            persInfo4TTfromStaticOnly.TTR_degree = getTTangleFromDirKinemStatic(path2static, InputData, 'r');
-            persInfo4TTfromStaticOnly.TTL_degree = getTTangleFromDirKinemStatic(path2static, InputData, 'l');
+            persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(path2static, InputData, 'r', varNameKneeAngle_c3d));
+            persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(path2static, InputData, 'l', varNameKneeAngle_c3d));
 
             torsiontool4TTfromStaticOnly = torsiontool;
             torsiontool4TTfromStaticOnly.femurAntetorsionAdaption = false; % just to make sure the values are not rotated again in case they were.
@@ -309,7 +309,17 @@ else
 
     %% Adapt frontal tibio-femoral angles in models before scaling (if tf_angle is ~= 0)
 
-    [path.genModel4Scaling, tf_angle_out, tf_angle_fromSource_out] = adjustFrontAlignmentModel(path.genModel4Scaling, path.plugIn, tf_angle_manual, side, tf_angle_fromSource, path2static, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback);
+    % Set side-specific variable.
+    if strcmpi(side(1), 'l')
+        varNameKneeAngle_c3d_2use = varNameKneeAngle_c3d.L;
+    elseif strcmpi(side(1), 'r')
+        varNameKneeAngle_c3d_2use = varNameKneeAngle_c3d.R;
+    else
+        error('>>>> Side not properly defined!')
+    end
+
+    [path.genModel4Scaling, tf_angle_out, tf_angle_fromSource_out] = adjustFrontAlignmentModel(path.genModel4Scaling, path.plugIn, tf_angle_manual, side, tf_angle_fromSource, path2static, BodyHeight, bodymass, persInfo, ...
+                                                                    useStatic4FrontAlignmentAsFallback, rootWorkingDirectory, varNameKneeAngle_c3d_2use, varNameKneeAngle_c3d.posFront);
 
     %% Load OpenSim API and scale the model
     % Load the API, and jam plugin

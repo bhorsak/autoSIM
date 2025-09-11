@@ -95,7 +95,7 @@ see (`.\_commonFiles\sharedFunctions\ThirdPartyFiles`) and included OpenSim mode
 This project also includes or depends on third-party components with their own licenses (e.g., BSD, MPL, CC-BY-NC). These components are clearly marked in the repository. Users of this project are responsible for ensuring compliance with the corresponding licenses when using or redistributing those parts.
 
 ## Further References
-Depending on which Model or built-in Tool you will be using, please also consider to cite the following papers. Note the list might not be complete. PLease double-check the settings you make and make sure to cite Third-Party Tools, Coe, Models, ... appropriately.
+Depending on which Model or built-in Tool you will be using, please also consider to cite the following papers. Note the list might not be complete. Please double-check the settings you make and make sure to cite Third-Party Tools, Code, Models, ... appropriately.
 
 ```
 @article{laiWhyAreAntagonist2017,

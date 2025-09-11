@@ -7,7 +7,7 @@ clear all; close all; clc;
 % to run the <Model_workflow.m> pipeline. It assumes that all relevant *.c3d files
 % are stored in one single directory (workingDirectory) and creates all
 % necessary *.trc and *.mot files as well as relevant input data for
-% the <lerner_workflow.m>.
+% the workflow.
 %
 % The workflow is mainly designed for walking trials but can be extended
 % easily to work for other event configurations. Note that this workflow
@@ -198,10 +198,15 @@ for j = 1 : length(rootDirs)
     % You can set manual adjustments with tf_angle_r/l. If tf_angle_fromSource is set to 'fromStatic' the tf angle from the static trial will be used based on the
     % data of the direct kinematic model outputs in the c3d file. If set to 'fromExtDataFile' the skript will try to fetch the data from an external
     % source file (data.xml). If this file is empty (and you set 'useStatic4FrontAlignmentAsFallback' to true) it will fall back to 'fromStatic'.
-    % Note that this will overwrite values set in tf_angle_r/l!
-    % If you want to evaluate different varus/valgus model configurations of the same individual, indicate them in the prefix, e.g. var2, var4, ...
+    % Note that this will overwrite values set in tf_angle_r/l! If you want to evaluate different varus/valgus model configurations of the same individual, indicate them in the prefix, e.g. var2, var4, ...
+    
+    % NOTE: in some cases we will use the knee angles from the static trial to estimate the TF angle. For this purpose we need to read the Left/Right Knee anlges fromt the static *.c3d file. The variable name needs to be specified here. 
+    varNameKneeAngle_c3d.R = 'RKneeAngles';             % default = 'RKneeAngles'; this depends on how the variable is defined in your *.c3d files.
+    varNameKneeAngle_c3d.L = 'LKneeAngles';             % default = 'LKneeAngles'; this depends on how the variable is defined in your *.c3d files.
+    varNameKneeAngle_c3d.posFront = 2;                  % default = 2; You can specify the position (column) of the frontal plane data in your *.c3d files.
+    varNameKneeAngle_c3d.posTrans = 3;                  % default = 3; You can specify the position (column) of the transverse plane data in your *.c3d files (later needed for TT).
     useStatic4FrontAlignmentAsFallback = true;          % default = false; true or false
-    tf_angle_fromSource = 'false';                      % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
+    tf_angle_fromSource = 'fromStatic';                      % default = 'false'; 'false', 'fromStatic', 'fromExtDataFile', 'manual'
     tf_angle_r = 0;                                     % default = 0
     tf_angle_l = 0;                                     % default = 0
 
@@ -214,7 +219,7 @@ for j = 1 : length(rootDirs)
     % NOTE to 'fromStatic' - we currently use the CleveLand Model (from OSS - Speising). Here external TT is NEGATIVE. Currently this values is multiplied by -1 to have the correct sign for the TorsionTool (where ext. TT is POSITIVE).
     useDirectKinematics4TibRotEstimationAsFallback = false;   % default = false; true or false;
     tibTorsionAdaptionMethod = 'fromStatic';        % default = 'fromStatic'; 'fromExtDataFile' or 'fromStatic'
-    tibTorsionAdaption = false;                     % default = false; true or false
+    tibTorsionAdaption = true;                     % default = false; true or false
     neckShaftAdaption = false;                      % default = false; true or false
     femurAntetorsionAdaption = false;               % default = false; true or false
 
@@ -463,6 +468,12 @@ for j = 1 : length(rootDirs)
         return;
     end
 
+    % Check if paths contain empty space - the OpenSim API does not like that.
+    if contains(repoPath, ' ') || contains(rootDirectory, ' ')
+        disp('WARNING: Empty spaces detected in repopath or root directory! Stopping script. AutoSIM does not support empty or special characters in paths!');
+        return;
+    end
+
 
     % Create Model specific path2genModels
     switch Model2Use
@@ -527,13 +538,13 @@ for j = 1 : length(rootDirs)
         endIdx = min(batchIdx * batchSize, Nmax);  % Ensure not to exceed Nmax
 
         % Run the parallel loop for the current batch
-        %for i_parfor = startIdx:endIdx; warning("parfor not activated!"); %#> for development only
-        parfor (i_parfor = startIdx:endIdx, maxNumWorkers)
+        for i_parfor = startIdx:endIdx; warning("parfor not activated!"); %#> for development only
+        %parfor (i_parfor = startIdx:endIdx, maxNumWorkers)
             loops4Models_parfor(rootDirectory, workingDirectories, staticC3dFiles, conditions, labFlag, path2GenericModels, path2opensim, path2setupFiles, tf_angle_r, tf_angle_l, ...
                 firstContact_L, firstContact_R, prefixCell, timeNorm, maxCmd, thresholdCpuLoad, lockSubtalar4Scaling, ...
                 scaleMuscleStrength, manualMusScaleF, markerSet, bodyheightGenericModel, addPelvisHelperMarker, pelvisMarker4nonUniformScaling, tf_angle_fromSource, torsiontool, useDirectKinematics4TibRotEstimationAsFallback, ...
                 tib_torsion_LeftMarkers, tib_torsion_RightMarkers, forceTrcMotCreation, ForceModelCreation, renameC3DFiles2enfDescription, ...
-                Model2Use, tasks, checkAndAdaptMomArms, useASTool, i_parfor, useStatic4FrontAlignmentAsFallback, useC3Devents, useCPUThreshold, tibTorsionAdaptionMethod, pelvisWidthGenericModel, scalePelvisManually);
+                Model2Use, tasks, checkAndAdaptMomArms, useASTool, i_parfor, useStatic4FrontAlignmentAsFallback, useC3Devents, useCPUThreshold, tibTorsionAdaptionMethod, pelvisWidthGenericModel, scalePelvisManually, varNameKneeAngle_c3d);
         end
 
         % Shut down parallel pool to release allocated RAM by the parpool.

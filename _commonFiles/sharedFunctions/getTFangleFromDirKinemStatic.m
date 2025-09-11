@@ -1,10 +1,11 @@
-function [tf_angle_used] = getTFangleFromDirKinemStatic(static, side)
+function [tf_angle_used] = getTFangleFromDirKinemStatic(static, varNameKneeAngle_c3d_posFront, varNameKneeAngle_c3d)
+
 
 % Get TF angle directly from direct kinematic model output from the c3d file.
 acq = btkReadAcquisition(static);
 angles = btkGetAngles(acq);
-kneeVariable = strcat(upper(side),'KneeAngles');
-kneeAdd = median(angles.(kneeVariable)(:,2));
+% kneeVariable = strcat(upper(side), varNameKneeAngle_c3d);
+kneeAdd = median(angles.(varNameKneeAngle_c3d)(:,varNameKneeAngle_c3d_posFront));
 
 tf_angle_used = round(kneeAdd,1);
 

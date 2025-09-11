@@ -1,7 +1,7 @@
 function [path2scaledModel, torsionTool_out, tf_angle_fromSource_r, tf_angle_fromSource_l, tf_angle_right, tf_angle_left, MomArmsResolved, persInfoFromMarkers] = prepareScaledModel(rootWorkingDirectory, workingDirectory, path2GenericModels, path2opensim, bodymass, static_trc_fileName, ...
     labFlag, lockSubtalar4Scaling, scaleMuscleStrength, manualMusScaleF, prefix, bodyheightGenericModel, BodyHeight, ...
     tf_angle_fromSource, tf_angle_r, tf_angle_l, staticC3d, Model2Use, torsiontool, tib_torsion_Markers_Right, tib_torsion_Markers_Left, ...
-    ForceModelCreation, checkAndAdaptMomArms, sampleInputFile, useASTool, useDirectKinematics4TibRotEstimationAsFallback, useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, InputData, pelvisWidthGenericModel, scalePelvisManually)
+    ForceModelCreation, checkAndAdaptMomArms, sampleInputFile, useASTool, useDirectKinematics4TibRotEstimationAsFallback, useStatic4FrontAlignmentAsFallback, tibTorsionAdaptionMethod, InputData, pelvisWidthGenericModel, scalePelvisManually, varNameKneeAngle_c3d)
 
 
 % This file scales the *.osim model using the API and opensim from the
@@ -241,8 +241,8 @@ elseif (torsiontool.tibTorsionAdaption || torsiontool.neckShaftAdaption || torsi
 
     % Initialize new personalization infos.
     persInfo4TTfromStaticOnly = persInfo;
-    persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'r'));
-    persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'l'));
+    persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'r', varNameKneeAngle_c3d));
+    persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'l', varNameKneeAngle_c3d));
 
     torsiontool4TTfromStaticOnly = torsiontool;
     torsiontool4TTfromStaticOnly.femurAntetorsionAdaption = false; % just to make sure the values are not rotated again in case they were.
@@ -291,8 +291,8 @@ if useDirectKinematics4TibRotEstimationAsFallback && ~strcmp(tibTorsionAdaptionM
         persInfo4TTfromStaticOnly = persInfo;
 
         % Set new personalization infos.
-        persInfo4TTfromStaticOnly.TTR_degree = getTTangleFromDirKinemStatic(staticC3d, InputData, 'r');
-        persInfo4TTfromStaticOnly.TTL_degree = getTTangleFromDirKinemStatic(staticC3d, InputData, 'l');
+        persInfo4TTfromStaticOnly.TTR_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'r', varNameKneeAngle_c3d));
+        persInfo4TTfromStaticOnly.TTL_degree = round(getTTangleFromDirKinemStatic(staticC3d, InputData, 'l', varNameKneeAngle_c3d));
 
         torsiontool4TTfromStaticOnly = torsiontool;
         torsiontool4TTfromStaticOnly.femurAntetorsionAdaption = false; % just to make sure the values are not rotated again in case they were.
@@ -308,8 +308,8 @@ end
 %% Adapt frontal tibio-femoral angles in models before scaling (if tf_angle is ~= 0)
 % Right and Left separately and after each other.
 
-[path.genModel4Scaling, tf_angle_right, tf_angle_fromSource_r] = adjustFrontAlignmentModel(path.genModel4Scaling, tf_angle_r, tf_angle_fromSource, 'right', staticC3d, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback, Model2Use);
-[path.genModel4Scaling, tf_angle_left, tf_angle_fromSource_l] = adjustFrontAlignmentModel(path.genModel4Scaling, tf_angle_l, tf_angle_fromSource, 'left', staticC3d, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback, Model2Use);
+[path.genModel4Scaling, tf_angle_right, tf_angle_fromSource_r] = adjustFrontAlignmentModel(path.genModel4Scaling, tf_angle_r, tf_angle_fromSource, 'right', staticC3d, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback, Model2Use, rootWorkingDirectory, varNameKneeAngle_c3d.R, varNameKneeAngle_c3d.posFront);
+[path.genModel4Scaling, tf_angle_left, tf_angle_fromSource_l] = adjustFrontAlignmentModel(path.genModel4Scaling, tf_angle_l, tf_angle_fromSource, 'left', staticC3d, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback, Model2Use, rootWorkingDirectory, varNameKneeAngle_c3d.L, varNameKneeAngle_c3d.posFront);
 
 %% Collect the median frontal knee value from the static and the tib torsion only for documentation. 
 % These values are used for eg the valgus/varus estimation and the tib.

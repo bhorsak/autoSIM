@@ -1,4 +1,5 @@
-function [path2adjustedModel, tf_angle_out, tf_angle_fromSource_out] = adjustFrontAlignmentModel(path2scaledModel, tf_angle_manual, tf_angle_fromSource, side, static, BodyHeight, bodymass, persInfo, useStatic4FrontAlignmentAsFallback, Model2Use)
+function [path2adjustedModel, tf_angle_out, tf_angle_fromSource_out] = adjustFrontAlignmentModel(path2scaledModel, tf_angle_manual, tf_angle_fromSource, side, static, BodyHeight, bodymass, persInfo, ...
+                                                                        useStatic4FrontAlignmentAsFallback, Model2Use, rootWorkingDirectory, varNameKneeAngle_c3d, varNameKneeAngle_c3d_posFront)
 % This file adapts a *.osim model and changes the frontal tibio-femoral 
 % alignment.
 %
@@ -13,10 +14,19 @@ function [path2adjustedModel, tf_angle_out, tf_angle_fromSource_out] = adjustFro
 sideLong = char(lower(side));
 side = char(sideLong(1));
 
-% Check if the personalization data in persInfo can be used based on
-% the examination date. Otherwise skip. The difference should be below 14
-% days for TF.
-tibFemOk = checkIfExternalDataIsValid(persInfo, 'XRAYdate', 'EXAMINATIONdate', 14);
+% Read model personalization info
+dataFile = fullfile(rootWorkingDirectory, 'data.xml');
+if isfile(dataFile)
+    persInfo = readstruct(dataFile);
+    
+    % Check if the personalization data in persInfo can be used based on
+    % the examination date. Otherwise skip. The difference should be below 14
+    % days for TF.
+    tibFemOk = checkIfExternalDataIsValid(persInfo, 'XRAYdate', 'EXAMINATIONdate', 14);
+else
+    persInfo = ''; % just to have the variable.
+    tibFemOk = false;
+end
 
 % Now proceed with rest.
 if strcmpi(tf_angle_fromSource, 'false')
@@ -42,7 +52,7 @@ else
             % In case the from ext. does not contain info, this will be the
             % fallback.
             if useStatic4FrontAlignmentAsFallback
-                tf_angle_used = getTFangleFromDirKinemStatic(static, side);
+                tf_angle_used = getTFangleFromDirKinemStatic(static, varNameKneeAngle_c3d_posFront, varNameKneeAngle_c3d);
                 tf_angle_fromSource_out = 'fromStatic';
             else
                 tf_angle_used = 0;
@@ -50,7 +60,7 @@ else
             end
 
         elseif strcmpi(tf_angle_fromSource, 'fromStatic')
-            tf_angle_used = getTFangleFromDirKinemStatic(static, side);
+            tf_angle_used = getTFangleFromDirKinemStatic(static, varNameKneeAngle_c3d_posFront, varNameKneeAngle_c3d);
             tf_angle_fromSource_out = tf_angle_fromSource;
 
         end
@@ -61,7 +71,7 @@ else
             tf_angle_fromSource_out = tf_angle_fromSource;
 
         elseif useStatic4FrontAlignmentAsFallback
-            tf_angle_used = getTFangleFromDirKinemStatic(static, side);
+            tf_angle_used = getTFangleFromDirKinemStatic(static, varNameKneeAngle_c3d_posFront, varNameKneeAngle_c3d);
             tf_angle_fromSource_out = 'fromStatic';
         else
             tf_angle_used = 0;
