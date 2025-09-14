@@ -1,6 +1,8 @@
 ## autoSIM: a Matlab-based fully automated workflow for semi-personalized physics-based OpenSim simulations.
 
-This is a bundle of Matlab scripts and files that allow to run different *.osim models on a set of *.c3d files. It will help to handle all of the necessary files (*.xml, *.trc, *.mot, etc.) to run the simulations. Once set up, it is possible to iterate several trials in Matlab automatically. AutoSim was originally developed for the Joint Articulation Mechanics (JAM, https://github.com/clnsmith/opensim-jam) workflow of C. Smith, but then was extended to also run other models. 
+This is a bundle of Matlab scripts and files that allow to run different *.osim models on a set of *.c3d files. It will help to handle all of the necessary files (*.xml, *.trc, *.mot, etc.) to run the simulations. Once set up, it is possible to iterate several trials in Matlab automatically. AutoSim was originally developed for the Joint Articulation Mechanics (JAM, https://github.com/clnsmith/opensim-jam) workflow of C. Smith, but then was extended to also run other models.
+
+AutoSim was developed to handle large-scale datasets and to fully automate OpenSim simulations across vast amounts of data, addressing the growing demand for big data in the era of machine learning and biomechanics. For example, we successfully used AutoSim to generate semi-personalized simulations of ~80,000 gait cycles using the "Lernergopal model", all within less than two weeks of processing time.
 
 ## Prerequisites
 
